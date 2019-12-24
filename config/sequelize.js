@@ -1,7 +1,9 @@
 const Sequelize = require('sequelize')
 const UserModel = require('../models/user.model')
+const PostModel = require('../models/post.model')
 
-const sequelize = new Sequelize('database.sqlite', 'root', '', {
+
+const sequelize = new Sequelize( 'database.sqlite', 'root', '', {
   dialect: 'sqlite',
   storage: './database.sqlite',
   pool: {
@@ -10,9 +12,11 @@ const sequelize = new Sequelize('database.sqlite', 'root', '', {
     acquire: 30000,
     idle: 10000
   }
-})
+} )
 
 const User = UserModel(sequelize, Sequelize)
+const Post = PostModel(sequelize, Sequelize)
+Post.belongsTo(User, { foreignKey: 'UserUserId' } )
 // BlogTag will be our way of tracking relationship between Blog and Tag models
 // each Blog can have multiple tags and each Tag can have multiple blogs
 // const BlogTag = sequelize.define('blog_tag', {})
@@ -29,5 +33,6 @@ sequelize.sync({ force: false })
   })
 
 module.exports = {
-  User
+  User,
+  Post
 }

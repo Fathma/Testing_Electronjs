@@ -9,7 +9,7 @@ const ejse = require('ejs-electron');
 const { ipcMain } = require('electron');
 var fs = require('fs'); 
 const { dialog } = require('electron')
-const { User } = require('./config/sequelize')
+const { User, Post } = require('./config/sequelize')
 const Sequelize = require('sequelize');
 var mainWindow;
 
@@ -58,10 +58,9 @@ ipcMain.on('search',async (e, obj)=>{
 
 ipcMain.on('open_update',async (e, obj)=>{
     const modalPath = path.join(__dirname, "./views/update.ejs");
-    // let result = await User.findByPk(obj.id)
-    // result.img = '../static/img/'+obj.id+'.png'
-    console.log(obj.result)
-    ejse.data('data1', obj.result)
+    let result = await User.findByPk(obj.id)
+    result.img = '../static/img/'+obj.id+'.png'
+    ejse.data('data1', result)
     
     let win = new BrowserWindow({
         webPreferences: {
@@ -76,8 +75,6 @@ ipcMain.on('open_update',async (e, obj)=>{
     });
     win.loadURL(modalPath);
 
-
-    
     // let window = mainWindow
     // const modalPath = path.join(__dirname, './views/update.ejs')
     // let result = await User.findByPk(obj.id)
@@ -102,11 +99,13 @@ ipcMain.on('load_main',async (e, obj)=>{
 ipcMain.on('save_data', async (e, obj)=>{
     try{
         User.create(obj.body).then((u)=>{
-            var base64Data = obj.img.replace(/^data:image\/jpeg;base64,/, "");
-            require("fs").writeFile("./static/img/"+u.UserId+".png", base64Data, 'base64', function(err) {
-                if(err) console.log(err);
-            })
-           loadMain()
+            // Post.create({ body: "lalala", UserUserId: u.UserId }).then((ur)=>{
+                var base64Data = obj.img.replace(/^data:image\/jpeg;base64,/, "");
+                require("fs").writeFile("./static/img/"+ u.UserId +".png", base64Data, 'base64', function(err) {
+                    if(err) console.log(err);
+                })
+                loadMain()
+            // })
         })
     }catch(e){
         console.log(e)
@@ -166,9 +165,11 @@ app.on("ready", () => {
 
 
 async function loadMain(){
-   
+    let re = await Post.findAll({ include:[User] })
+    console.log(re)
     let resu = await User.findAll()
     ejse.data('data', resu)
+    ejse.data('da', re)
 
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, './views/main.ejs'),

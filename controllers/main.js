@@ -7,11 +7,8 @@ function deletedata(id) {
 }
 
 // this redirects the action to ipcMian
-async function updatedatapage(id){
-    let result = await User.findByPk(id)
-    result.img = '../static/img/'+id+'.png'
-   
-    ipcRenderer.send('open_update', {result})
+function updatedatapage(id){
+    ipcRenderer.send('open_update', {id})
 }
 
 
