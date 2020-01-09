@@ -9,7 +9,7 @@ const ejse = require('ejs-electron');
 const { ipcMain } = require('electron');
 var fs = require('fs'); 
 const { dialog } = require('electron')
-const { User, Post } = require('./config/sequelize')
+const { User, Post, UserPost } = require('./config/sequelize')
 const Sequelize = require('sequelize');
 var mainWindow;
 
@@ -165,19 +165,42 @@ app.on("ready", () => {
 
 
 async function loadMain(){
-    let re = await Post.findAll({ include:[User] })
-    console.log(re)
-    let resu = await User.findAll()
-    ejse.data('data', resu)
-    ejse.data('da', re)
+    // // adding new data to the join table
+    // User.findByPk(1).then(user=>{
+    //     user.addPost(2).then(u=>{
+    //         console.log("asdjasjd")
+    //     })
+    // })
+    // User.create({ FirstName: "sdf", LastName: "sdfsd", Age: 12 }).then((u)=>{
+    //     Post.create({ body:'body', UserId:u.UserId }).then(async(usdfdsf)=>{
+            
+            // let users = await Post.findAll({ include: [{ model: User }]})
+            // var data = users.map(function(user){ return user.toJSON() });
+            // console.log(data)
+        
 
-    mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, './views/main.ejs'),
-        protocol: 'file',
-        slashes: true
-    }));
-   
-    mainWindow.once("ready-to-show", () => { mainWindow.show() })
+           
+            
+            // getting data with inner table
+            let resu = await User.findAll({ include: [{ model: Post, as:"post" }], where:{UserId: 1}})
+            var data = resu.map(function(UserPost){ return UserPost.toJSON() });
+            console.log(data[0])
+
+            ejse.data('data', resu)
+            // ejse.data('re', re)
+        
+            mainWindow.loadURL(url.format({
+                pathname: path.join(__dirname, './views/main.ejs'),
+                protocol: 'file',
+                slashes: true
+            }));
+        
+            mainWindow.once("ready-to-show", () => { mainWindow.show() })
+     
+    //     }) 
+    // })
+    
+    
 }
 
 

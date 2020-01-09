@@ -2,7 +2,7 @@
 const Sequelize = require('sequelize');
 
 module.exports = (sequelize, type) => {
-    return sequelize.define('Post', {
+    const Post =  sequelize.define('Post', {
         PostId: {
           type: type.INTEGER,
           primaryKey: true,
@@ -13,5 +13,13 @@ module.exports = (sequelize, type) => {
           allowNull: false
         }
     })
+    // Post.associate = (models) => {
+    //   Post.belongsToMany(models.User, {
+    //     through: 'UserPost',
+    //     as: 'user',
+    //     foreignKey: 'UserId'
+    //   });
+    // };
+    return Post
 }
 
