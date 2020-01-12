@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize')
 const UserModel = require('../models/user.model')
 const PostModel = require('../models/post.model')
-// const UserPostModel = require('../models/post.model')
+const UserPosteModel = require('../models/userPost.model')
 
 
 
@@ -19,18 +19,38 @@ const sequelize = new Sequelize( 'database.sqlite', 'root', '', {
 
 const Post = PostModel(sequelize, Sequelize)
 const User = UserModel(sequelize, Sequelize)
+const UserPost = UserPosteModel(sequelize, Sequelize)
+
+
 
 User.belongsToMany(Post, {
-  through: "UserPosts" ,
+  through: UserPost ,
   as: 'post',
-  foreignKey: 'UserId'
+  foreignKey: 'UserUserId'
 });
 
 Post.belongsToMany(User, {
-  through: "UserPosts",
+  through: UserPost,
   as: 'user',
-  foreignKey: 'PostId'
+  foreignKey: 'PostPostId'
 });
+
+// for populating user and post from join table 
+UserPost.belongsTo(User)
+UserPost.belongsTo(Post)
+
+
+// User.belongsToMany(Post, {
+//   through: "UserPosts" ,
+//   as: 'post',
+//   foreignKey: 'UserId'
+// });
+
+// Post.belongsToMany(User, {
+//   through: "UserPosts",
+//   as: 'user',
+//   foreignKey: 'PostId'
+// });
 
 
 // const UserPost = UserPostModel(sequelize, Sequelize)
@@ -59,5 +79,6 @@ sequelize.sync({ force: false })
 
 module.exports = {
   User,
-  Post
+  Post,
+  UserPost
 }

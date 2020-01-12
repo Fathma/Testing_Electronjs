@@ -166,36 +166,41 @@ app.on("ready", () => {
 
 async function loadMain(){
     // // adding new data to the join table
-    // User.findByPk(1).then(user=>{
-    //     user.addPost(2).then(u=>{
+    // Post.findByPk(1).then(post=>{
+    //     post.addUser(2).then(u=>{
     //         console.log("asdjasjd")
     //     })
     // })
+
+
     // User.create({ FirstName: "sdf", LastName: "sdfsd", Age: 12 }).then((u)=>{
     //     Post.create({ body:'body', UserId:u.UserId }).then(async(usdfdsf)=>{
             
-            // let users = await Post.findAll({ include: [{ model: User }]})
-            // var data = users.map(function(user){ return user.toJSON() });
-            // console.log(data)
-        
+        // let users = await Post.findAll({ include: [{ model: User }]})
+        // var data = users.map(function(user){ return user.toJSON() });
+        // console.log(data)
 
-           
-            
-            // getting data with inner table
-            let resu = await User.findAll({ include: [{ model: Post, as:"post" }], where:{UserId: 1}})
-            var data = resu.map(function(UserPost){ return UserPost.toJSON() });
-            console.log(data[0])
+        // querying from the join table
+        let resu2 = await UserPost.findAll({ include: [{ model: User },{ model: Post }], where:{ id: 1 }})
+        var data2 = resu2.map(function(UserPost){ return UserPost.toJSON() });
+        console.log(data2)
 
-            ejse.data('data', resu)
-            // ejse.data('re', re)
-        
-            mainWindow.loadURL(url.format({
-                pathname: path.join(__dirname, './views/main.ejs'),
-                protocol: 'file',
-                slashes: true
-            }));
-        
-            mainWindow.once("ready-to-show", () => { mainWindow.show() })
+    
+        // getting data with inner table
+        let resu = await User.findAll({ include: [{ model: Post, as:"post" }], where:{UserId: 1}})
+        var data = resu.map(function(UserPost){ return UserPost.toJSON() });
+        // console.log(data[0])
+
+        ejse.data('data', resu)
+        // ejse.data('re', re)
+    
+        mainWindow.loadURL(url.format({
+            pathname: path.join(__dirname, './views/main.ejs'),
+            protocol: 'file',
+            slashes: true
+        }));
+    
+        mainWindow.once("ready-to-show", () => { mainWindow.show() })
      
     //     }) 
     // })
